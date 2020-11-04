@@ -46,25 +46,28 @@ class SpikingNetwork
 {
 private:
     Real runtime;
-    Network netw;
+    Network m_netw;
     parameterType parameter;
     size_t maxAV,maxV,xSize,ySize,numDirections;
     const char *simulator;
 
-    void createIntWTA(std::string name,size_t size,size_t maxShift,bool overflow);
-    void createPositionNetwork();
-    int plotPopulation(std::string name, int i, int time);
-    int plotMembranVoltage(std::string name, int neuron, int i);
-    int plotWeights(int i);
-    void createCollisionDetectionNetwork();
-    void createNetwork();
-    void createTrigger(std::string name,size_t maxShift,std::vector<triggerType> trigger);
-    void createTrigger(std::string name,std::vector<triggerType2> trigger);
-    void createMoveDirNet(int maxV);
-    parameterType readParameters();
+    void createIntWTA(Network& netw, std::string name,size_t size,size_t maxShift,bool overflow);
+    void createPositionNetwork(Network& netw);
+    int plotPopulation(Network& netw, std::string name, int i, int time);
+    int plotMembranVoltage(Network& netw, std::string name, int neuron, int i);
+    int plotWeights(Network& netw, int i);
+    void createCollisionDetectionNetwork(Network& netw);
+    void createTrigger(Network& netw, std::string name,size_t maxShift,std::vector<triggerType> trigger);
+    void createTrigger(Network& netw, std::string name,std::vector<triggerType2> trigger);
+    void createMoveDirNet(Network& netw, int maxV);
+    parameterType readParameters(std::string config_path);
+    parameterType readParameters(const Json& config);
 
 public:
-    SpikingNetwork(const char *simulator= "nest",size_t numDirections=8, size_t xSize=3, size_t ySize=3, size_t maxAV=1, size_t maxV=1);
+    SpikingNetwork(const char *simulator= "nest",size_t numDirections=8, size_t xSize=3, size_t ySize=3, size_t maxAV=1, size_t maxV=1, std::string config_path = "");
+    SpikingNetwork(const char *simulator, const Json& config, size_t numDirections=8, size_t xSize=3, size_t ySize=3, size_t maxAV=1, size_t maxV=1);
+    void createNetwork(Network& netw, std::string sim_path= "../result/simulation");
+    void createNetwork(std::string sim_path= "../result/simulation");
     void run();
     void printResults();
     json readFromFile(std::string directory);

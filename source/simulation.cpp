@@ -237,7 +237,7 @@ std::vector<bool> Simulation::getBumperSensor()
     bumperSensor.push_back(map.getCoordinate(x,y-1));
     bumperSensor.push_back(false);
     int sum=0;
-    for(int i=0;i<bumperSensor.size();i++) if(bumperSensor[i]==true) sum++;
+    for(size_t i=0;i<bumperSensor.size();i++) if(bumperSensor[i]==true) sum++;
     if(sum==0){
         bumperSensor.clear();
         bumperSensor.push_back(false);

@@ -12,7 +12,7 @@ using namespace cypress;
 
 
 
-SpikingNetwork::SpikingNetwork(const char *simulator,size_t numDirections, size_t xSize, size_t ySize, size_t maxAV, size_t maxV)
+SpikingNetwork::SpikingNetwork(const char *simulator,size_t numDirections, size_t xSize, size_t ySize, size_t maxAV, size_t maxV, std::string config_path)
 {
     this->maxAV = maxAV;
     this->maxV = maxV;
@@ -21,11 +21,24 @@ SpikingNetwork::SpikingNetwork(const char *simulator,size_t numDirections, size_
     this->numDirections = numDirections;
     runtime = 0;
     this->simulator = simulator;
-    parameter = readParameters();
-    netw = Network();
+    parameter = readParameters(config_path);
+    m_netw = Network();
     if(this->maxV<numDirections/8) this->maxV = static_cast<size_t>((int)(numDirections/8));
 }
 
+SpikingNetwork::SpikingNetwork(const char *simulator, const Json& config, size_t numDirections, size_t xSize, size_t ySize, size_t maxAV, size_t maxV)
+{
+    this->maxAV = maxAV;
+    this->maxV = maxV;
+    this->xSize = xSize;
+    this->ySize = ySize;
+    this->numDirections = numDirections;
+    runtime = 0;
+    this->simulator = simulator;
+    parameter = readParameters(config);
+    m_netw = Network();
+    if(this->maxV<numDirections/8) this->maxV = static_cast<size_t>((int)(numDirections/8));
+}
 void SpikingNetwork::run()
 {
     global_logger().min_level(LogSeverity::INFO);
@@ -34,11 +47,11 @@ void SpikingNetwork::run()
     // Run the simulation for "duration" seconds
     cypress::PowerManagementBackend pwbackend(
         cypress::Network::make_backend(simulator));
-    netw.run(pwbackend, runtime);
+    m_netw.run(pwbackend, runtime);
     printResults();
 }
 
-int SpikingNetwork::plotPopulation(std::string name, int i, int time){
+int SpikingNetwork::plotPopulation(Network& netw, std::string name, int i, int time){
     std::vector<std::vector<Real>> spikes = {};
     for (size_t j = 0; j < netw.populations(name)[0].size(); j++) {
             spikes.push_back(netw.populations(name)[0][j].signals().data(0));
@@ -54,7 +67,7 @@ int SpikingNetwork::plotPopulation(std::string name, int i, int time){
     return i += 1;
 }
 
-int SpikingNetwork::plotMembranVoltage(std::string name, int neuron, int i){
+int SpikingNetwork::plotMembranVoltage(Network& netw, std::string name, int neuron, int i){
     auto v_and_time = netw.populations<IfCondExp>(name)[0][neuron].signals().get_v();
     std::vector<Real> time, voltage;
     for(size_t j=0; j<v_and_time.rows(); j++){
@@ -69,7 +82,7 @@ int SpikingNetwork::plotMembranVoltage(std::string name, int neuron, int i){
     return i += 1;
 }
 
-int SpikingNetwork::plotWeights(int i){
+int SpikingNetwork::plotWeights(Network& netw, int i){
     const auto& weights_ = netw.connection("stdp").connector().learned_weights();
     size_t xSize = netw.populations("X")[0].size();
     size_t ySize = netw.populations("Y")[0].size();
@@ -96,34 +109,34 @@ void SpikingNetwork::printResults()
     pyplot::figure_size(1200, 800);
     int i = 1;
 
-    //i = plotPopulation("triggerHD",i,int(runtime));
-    //i = plotPopulation("triggerHDSP",i,int(runtime));
-    //i = plotPopulation("triggerHDSN",i,int(runtime));
-    //i = plotPopulation("HDSP",i,int(runtime));
-    //i = plotPopulation("HDSN",i,int(runtime));
-    i = plotPopulation("HD",i,int(runtime));
+    //i = plotPopulation(m_netw,"triggerHD",i,int(runtime));
+    //i = plotPopulation(m_netw,"triggerHDSP",i,int(runtime));
+    //i = plotPopulation(m_netw,"triggerHDSN",i,int(runtime));
+    //i = plotPopulation(m_netw,"HDSP",i,int(runtime));
+    //i = plotPopulation(m_netw,"HDSN",i,int(runtime));
+    i = plotPopulation(m_netw, "HD",i,int(runtime));
 
-    //i = plotPopulation("triggerX",i,int(runtime));
-    //i = plotPopulation("triggerY",i,int(runtime));
-    //i = plotPopulation("triggerMVSP",i,int(runtime));
-    //i = plotPopulation("triggerMVSN",i,int(runtime));
-    //i = plotPopulation("MVDirPos",i,int(runtime));
-    //i = plotPopulation("MVDirNeg",i,int(runtime));
-    //i = plotPopulation("XSP",i,int(runtime));
-    //i = plotPopulation("XSN",i,int(runtime));
-    //i = plotPopulation("YSP",i,int(runtime));
-    //i = plotPopulation("YSN",i,int(runtime));
-    i = plotPopulation("X",i,int(runtime));
-    i = plotPopulation("Y",i,int(runtime));
+    //i = plotPopulation(m_netw,"triggerX",i,int(runtime));
+    //i = plotPopulation(m_netw,"triggerY",i,int(runtime));
+    //i = plotPopulation(m_netw,"triggerMVSP",i,int(runtime));
+    //i = plotPopulation(m_netw,"triggerMVSN",i,int(runtime));
+    //i = plotPopulation(m_netw,"MVDirPos",i,int(runtime));
+    //i = plotPopulation(m_netw,"MVDirNeg",i,int(runtime));
+    //i = plotPopulation(m_netw,"XSP",i,int(runtime));
+    //i = plotPopulation(m_netw,"XSN",i,int(runtime));
+    //i = plotPopulation(m_netw,"YSP",i,int(runtime));
+    //i = plotPopulation(m_netw,"YSN",i,int(runtime));
+    i = plotPopulation(m_netw,"X",i,int(runtime));
+    i = plotPopulation(m_netw,"Y",i,int(runtime));
 
-    i = plotPopulation("POS",i,int(runtime));
+    i = plotPopulation(m_netw,"POS",i,int(runtime));
 
-    //i = plotPopulation("triggerBS",i,int(runtime));
-    i = plotPopulation("CON",i,int(runtime));
+    //i = plotPopulation(m_netw,"triggerBS",i,int(runtime));
+    i = plotPopulation(m_netw,"CON",i,int(runtime));
 
     //i= plotMembranVoltage("POS",5,i);
 
-    i = plotWeights(i);
+    i = plotWeights(m_netw,i);
 
     pyplot::tight_layout();
     pyplot::show();
@@ -144,7 +157,7 @@ void SpikingNetwork::printResults()
     std::cout<<"file saved"<<std::endl;*/
 }
 
-void SpikingNetwork::createIntWTA(std::string name,size_t size,size_t maxShift,bool overflow)
+void SpikingNetwork::createIntWTA(Network& netw, std::string name,size_t size,size_t maxShift,bool overflow)
 {
     //Create WTA Populations
     netw.create_population<IfCondExp>(size, parameter.neuroParams.parameter(),IfCondExpSignals({"spikes"}),name.c_str());
@@ -162,7 +175,7 @@ void SpikingNetwork::createIntWTA(std::string name,size_t size,size_t maxShift,b
 
 }
 
-void SpikingNetwork::createMoveDirNet(int maxV){
+void SpikingNetwork::createMoveDirNet(Network& netw, int maxV){
 
     int numDirections = netw.populations("HD")[0].size();
     int xSize = netw.populations("X")[0].size();
@@ -237,12 +250,21 @@ void SpikingNetwork::createMoveDirNet(int maxV){
 
 }
 
-parameterType SpikingNetwork::readParameters()
+parameterType SpikingNetwork::readParameters(std::string config_path)
 {
 
         // Reading the configuration file
-        Json config = readFromFile("../config/parameters_STDP.json");
+        Json config;
+        if(config_path==""){
+            config = readFromFile("../config/parameters_STDP.json");
+        }
+        else{
+            config = readFromFile(config_path);
+        }
+        return SpikingNetwork::readParameters(config);
+}
 
+parameterType SpikingNetwork::readParameters(const Json& config){
         parameterType parameter;
 
         // Parsing NeuronParameters
@@ -276,7 +298,7 @@ parameterType SpikingNetwork::readParameters()
         return parameter;
 }
 
-void SpikingNetwork::createPositionNetwork()
+void SpikingNetwork::createPositionNetwork(Network& netw)
 { //idea: ix and iy neurons inhibit all x and y positions in Position Network except their own mirrors, noise lets the final positon neuron spike
     //create position population
     netw.create_population<IfCondExp>(netw.populations("X")[0].size()*netw.populations("Y")[0].size(), parameter.neuroParams2.parameter(),IfCondExpSignals({"spikes"}).record_v(),"POS");
@@ -285,7 +307,7 @@ void SpikingNetwork::createPositionNetwork()
     netw.add_connection(netw.populations("Y")[0],netw.populations("POS")[0],std::make_unique<OneToVecConnector>(parameter.posSynEx,parameter.delay,"y"));
 }
 
-void SpikingNetwork::createCollisionDetectionNetwork()
+void SpikingNetwork::createCollisionDetectionNetwork(Network& netw)
 {
     //Create Populations
     netw.create_population<IfCondExp>(1, parameter.neuroParams3.parameter(),IfCondExpSignals({"spikes"}).record_v(),"CON"); //collision neuron
@@ -297,7 +319,7 @@ void SpikingNetwork::createCollisionDetectionNetwork()
     netw.add_connection(netw.populations("POS")[0],netw.populations("CON")[0],Connector::all_to_all(plasctic_synapse),"stdp");
 }
 
-void SpikingNetwork::createTrigger(std::string name,size_t maxShift,std::vector<triggerType> trigger)
+void SpikingNetwork::createTrigger(Network& netw, std::string name,size_t maxShift,std::vector<triggerType> trigger)
 {
     std::vector<std::vector<Real>> spikeTimesSP_({});
     std::vector<std::vector<Real>> spikeTimesSN_({});
@@ -319,7 +341,7 @@ void SpikingNetwork::createTrigger(std::string name,size_t maxShift,std::vector<
     netw.create_population<SpikeSourceArray>(maxShift, spikeTimesSN,SpikeSourceArraySignals({"spikes"}),("trigger"+name+"SN").c_str());
 }
 
-void SpikingNetwork::createTrigger(std::string name,std::vector<triggerType2> trigger)
+void SpikingNetwork::createTrigger(Network& netw, std::string name,std::vector<triggerType2> trigger)
 {
     std::vector<Real> spikeTimes_;
     for(size_t i=1;i<trigger.size();i++){
@@ -346,11 +368,15 @@ void SpikingNetwork::createTrigger(std::string name,std::vector<triggerType2> tr
     }
     netw.create_population<SpikeSourceArray>(trigger[0].value.size(), spikeTimes, SpikeSourceArraySignals({"spikes"}),("trigger"+name).c_str());
 */}
-
-void SpikingNetwork::createNetwork()
+void SpikingNetwork::createNetwork(std::string sim_path)
+{
+    m_netw = Network();
+    createNetwork(m_netw, sim_path);
+}
+void SpikingNetwork::createNetwork(Network& netw, std::string sim_path)
 {
     //load data
-    json simulationResults = readFromFile("../result/simulation");
+    json simulationResults = readFromFile(sim_path);
     std::vector<triggerType> av;
     std::vector<triggerType> v;
     std::vector<triggerType2> b;
@@ -370,18 +396,17 @@ void SpikingNetwork::createNetwork()
             b.push_back({bs,i});
         }
     }
-    netw = Network();
 
-    createIntWTA("HD",numDirections,maxAV,true);
-    createIntWTA("X",xSize,maxV,false);
-    createIntWTA("Y",ySize,maxV,false);
-    createPositionNetwork();
-    createCollisionDetectionNetwork();
-    createMoveDirNet((int)maxV);
+    createIntWTA(netw, "HD",numDirections,maxAV,true);
+    createIntWTA(netw, "X",xSize,maxV,false);
+    createIntWTA(netw, "Y",ySize,maxV,false);
+    createPositionNetwork(netw);
+    createCollisionDetectionNetwork(netw);
+    createMoveDirNet(netw, (int)maxV);
 
-    createTrigger("HD",maxAV,av);
-    createTrigger("MV",maxV,v);
-    createTrigger("BS",b);
+    createTrigger(netw,"HD",maxAV,av);
+    createTrigger(netw,"MV",maxV,v);
+    createTrigger(netw,"BS",b);
 
     //Create Initial Trigger (for hd in timestep zero to initialize starting direction)
     netw.create_population<SpikeSourceArray>(1,SpikeSourceArrayParameters(std::vector<cypress::Real> {parameter.start}),SpikeSourceArraySignals({"spikes"}),"triggerHD");
