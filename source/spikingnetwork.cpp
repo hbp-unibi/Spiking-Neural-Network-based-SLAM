@@ -94,9 +94,11 @@ int SpikingNetwork::plotWeights(Network& netw, int i){
             }
         }
     }
-    float* ptr = weight.data();
+    else{
+        throw;
+    }
     pyplot::subplot(3,3,i);
-    pyplot::imshow(ptr,ySize,xSize,1);
+    pyplot::imshow(weight.data(),ySize,xSize,1);
     pyplot::title("Learnt Map");
     return i += 1;
 }

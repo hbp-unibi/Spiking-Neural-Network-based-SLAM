@@ -66,8 +66,8 @@ private:
 public:
     SpikingNetwork(const char *simulator= "nest",size_t numDirections=8, size_t xSize=3, size_t ySize=3, size_t maxAV=1, size_t maxV=1, std::string config_path = "");
     SpikingNetwork(const char *simulator, const Json& config, size_t numDirections=8, size_t xSize=3, size_t ySize=3, size_t maxAV=1, size_t maxV=1);
-    void createNetwork(Network& netw, std::string sim_path= "../result/simulation");
-    void createNetwork(std::string sim_path= "../result/simulation");
+    void createNetwork(Network& netw, std::string sim_path= "../result/simulation.json");
+    void createNetwork(std::string sim_path= "../result/simulation.json");
     void run();
     void printResults();
     json readFromFile(std::string directory);

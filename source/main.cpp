@@ -71,7 +71,7 @@ int main()
 
 int main(int , char *argv[])
 {
-    SpikingNetwork netw = SpikingNetwork(argv[1],8,15,15,1,1);
+    SpikingNetwork netw(argv[1],8,15,15,1,1);
     netw.run();
 }
 

@@ -200,15 +200,22 @@ void Simulation::saveToFile() //currently saves json directly
 {
     std::ofstream file;
 
-    file.open("../result/simulation", std::ofstream::out);
+    file.open("../result/simulation.json", std::ofstream::out);
     if (!file.good()) {
-        file.open("../../result/simulation", std::ofstream::out);
+        file.open("../../result/simulation.json", std::ofstream::out);
         if (!file.good()) throw std::runtime_error("Could not open file");
     }
     /*std::vector<std::uint8_t> binary = toBinaryJson();
     for(int i=0;i<binary.size();i++) file.write((char*)&binary[i],sizeof(std::uint8_t));
     file << toJson() << std::endl; */
     data["simulationTime"] = time*10;  //time stretched for network
+    std::vector<std::vector<bool>> map_data(sizeX + 2, std::vector<bool>(sizeY + 2));
+    for(int i =0; i<sizeX + 2; i++){
+        for(int j =0; j<sizeY + 2; j++){
+            map_data[i][j] = map.getCoordinate(i,j);
+        }
+    }
+    data["map"] = map_data;
     file << data;
     file.close();
     std::cout<<"successfully written to file"<<std::endl;
