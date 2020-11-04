@@ -258,7 +258,7 @@ parameterType SpikingNetwork::readParameters(std::string config_path)
         // Reading the configuration file
         Json config;
         if(config_path==""){
-            config = readFromFile("../config/parameters_STDP.json");
+            config = readFromFile("../config/parameters.json");
         }
         else{
             config = readFromFile(config_path);
