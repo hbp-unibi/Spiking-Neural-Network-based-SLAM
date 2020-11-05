@@ -55,11 +55,23 @@ Dialog::Dialog(const char *simulator,QWidget *parent):
     QGraphicsRectItem *object = new QGraphicsRectItem((xPos-1)*4*r,len-yPos*4*r,4*r,4*r);
     scene->addItem(object);
     simulation.addObject(xPos,yPos);
-    /*//add object
-    xPos = 7;
+    //add object
+    /*xPos = 7;
     yPos = 9;
     QGraphicsRectItem *object2 = new QGraphicsRectItem((xPos-1)*4*r,len-yPos*4*r,4*r,4*r);
     scene->addItem(object2);
+    simulation.addObject(xPos,yPos);
+    //add object
+    xPos = 11;
+    yPos = 13;
+    QGraphicsRectItem *object3 = new QGraphicsRectItem((xPos-1)*4*r,len-yPos*4*r,4*r,4*r);
+    scene->addItem(object3);
+    simulation.addObject(xPos,yPos);
+    //add object
+    xPos = 10;
+    yPos = 4;
+    QGraphicsRectItem *object4 = new QGraphicsRectItem((xPos-1)*4*r,len-yPos*4*r,4*r,4*r);
+    scene->addItem(object4);
     simulation.addObject(xPos,yPos);*/
 
     timer = new QTimer(this);
