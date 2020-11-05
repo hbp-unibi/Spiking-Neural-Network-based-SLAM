@@ -80,10 +80,6 @@ public:
     ~AllbutONEConnectorMat() override = default;
     void connect(const ConnectionDescriptor &descr,
         std::vector<LocalConnection> &tar) const override;
-    bool group_connect(const ConnectionDescriptor &) const override
-        {
-            return true;
-        }
     bool valid(const ConnectionDescriptor &) const override { return true; }
     size_t size(size_t size_src_pop, size_t size_target_pop) const override
         {
@@ -100,10 +96,6 @@ public:
     ~AllbutONEConnectorVec() override = default;
     void connect(const ConnectionDescriptor &descr,
         std::vector<LocalConnection> &tar) const override;
-    bool group_connect(const ConnectionDescriptor &) const override
-        {
-            return true;
-        }
     bool valid(const ConnectionDescriptor &) const override { return true; }
     size_t size(size_t size_src_pop, size_t size_target_pop) const override
         {
@@ -119,10 +111,6 @@ public:
     ~ShiftConnector() override = default;
     void connect(const ConnectionDescriptor &descr,
         std::vector<LocalConnection> &tar) const override;
-    bool group_connect(const ConnectionDescriptor &) const override
-        {
-            return true;
-        }
     bool valid(const ConnectionDescriptor &) const override { return true; }
     size_t size(size_t size_src_pop, size_t size_target_pop) const override
         {
@@ -141,10 +129,6 @@ public:
     ~ShiftConnectorMat() override = default;
     void connect(const ConnectionDescriptor &descr,
         std::vector<LocalConnection> &tar) const override;
-    bool group_connect(const ConnectionDescriptor &) const override
-        {
-            return true;
-        }
     bool valid(const ConnectionDescriptor &) const override { return true; }
     size_t size(size_t size_src_pop, size_t size_target_pop) const override
         {
@@ -163,10 +147,6 @@ public:
     ~OneToVecConnector() override = default;
     void connect(const ConnectionDescriptor &descr,
         std::vector<LocalConnection> &tar) const override;
-    bool group_connect(const ConnectionDescriptor &) const override
-        {
-            return true;
-        }
     bool valid(const ConnectionDescriptor &) const override { return true; }
     size_t size(size_t size_src_pop, size_t size_target_pop) const override
         {
@@ -184,10 +164,6 @@ public:
     ~CustomConnector() override = default;
     void connect(const ConnectionDescriptor &descr,
         std::vector<LocalConnection> &tar) const override;
-    bool group_connect(const ConnectionDescriptor &) const override
-        {
-            return true;
-        }
     bool valid(const ConnectionDescriptor &) const override { return true; }
     size_t size(size_t size_src_pop, size_t size_target_pop) const override
         {
