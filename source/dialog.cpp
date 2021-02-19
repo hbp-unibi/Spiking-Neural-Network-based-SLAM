@@ -28,6 +28,7 @@ Dialog::Dialog(const char *simulator,QWidget *parent):
     //add graphic scene
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+    ui->graphicsView->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
     scene->setSceneRect(0,0,len,len);
     QPen myPen = QPen(Qt::black);
     QLineF topLine(scene->sceneRect().topLeft(),scene->sceneRect().topRight());
