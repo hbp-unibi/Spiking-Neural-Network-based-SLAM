@@ -102,7 +102,6 @@ int SpikingNetwork::plotWeights(Network& netw, int i){
     pyplot::title("Learnt Map");
     return i += 1;
 }
-
 void SpikingNetwork::printResults()
 {
     //maximal 9 Subplots
@@ -157,6 +156,25 @@ void SpikingNetwork::printResults()
 
     pyplot::save(file_);
     std::cout<<"file saved"<<std::endl;*/
+}
+
+
+void SpikingNetwork::printResults(std::string filename){
+
+    // Print the spike times for each target neuron
+    pyplot::figure_size(1200, 800);
+    int i = 1;
+    i = plotPopulation(m_netw, "HD",i,int(runtime));
+    i = plotPopulation(m_netw,"X",i,int(runtime));
+    i = plotPopulation(m_netw,"Y",i,int(runtime));
+
+    i = plotPopulation(m_netw,"POS",i,int(runtime));
+    i = plotPopulation(m_netw,"CON",i,int(runtime));
+
+    i = plotWeights(m_netw,i);
+
+    pyplot::tight_layout();
+    pyplot::save(filename);
 }
 
 void SpikingNetwork::createIntWTA(Network& netw, std::string name,size_t size,size_t maxShift,bool overflow)

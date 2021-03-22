@@ -70,6 +70,7 @@ public:
     void createNetwork(std::string sim_path= "../result/simulation.json");
     void run();
     void printResults();
+    void printResults(std::string filename);
     json readFromFile(std::string directory);
 };
 
